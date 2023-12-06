@@ -1,0 +1,23 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-liffvue-dev-120418-authRole",
+      "UnauthRoleArn": "arn:aws:iam::361452760157:role/amplify-liffvue-dev-120418-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::361452760157:role/amplify-liffvue-dev-120418-authRole",
+      "Region": "ap-northeast-1",
+      "DeploymentBucketName": "amplify-liffvue-dev-120418-deployment",
+      "UnauthRoleName": "amplify-liffvue-dev-120418-unauthRole",
+      "StackName": "amplify-liffvue-dev-120418",
+      "StackId": "arn:aws:cloudformation:ap-northeast-1:361452760157:stack/amplify-liffvue-dev-120418/264e3430-93e4-11ee-878a-0a66c368dadd",
+      "AmplifyAppId": "dp5oi1krsso8n"
+    },
+    "categories": {
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "dp5oi1krsso8n",
+          "type": "manual"
+        }
+      }
+    }
+  }
+}
