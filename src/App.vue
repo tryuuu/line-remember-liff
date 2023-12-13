@@ -70,7 +70,7 @@ export default defineComponent({
 
     async function fetchUserData(userId) {
       try {
-        const response = await axios.post('https://nif4ujmi72rexthm55wuu2tyom0pnbbc.lambda-url.ap-northeast-1.on.aws/', {
+        const response = await axios.post('Lambda_URL', {
           user_id: userId
         });
         return response.data;
