@@ -4,6 +4,7 @@
       <div v-for="(item, index) in userData" :key="index" class="message-item">
         <img v-if="isImageUrl(item)" :src="item" alt="Image" class="message-image" />
         <pre v-else class="message-code"><code>{{ item }}</code></pre>
+        <button @click="deleteItem(index)" class="delete-button">↑削除</button>
       </div>
     </div>
     <div v-else>
@@ -13,6 +14,17 @@
 </template>
 
 <style>
+.delete-button {
+  margin-left: 10px;
+  margin-top: -50px;
+  background-color: red;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
 .message-item {
   max-width: 90%;
   margin: 10px auto;
@@ -49,6 +61,24 @@ import axios from 'axios';
 export default defineComponent({
   setup() {
     const userData = ref(null);
+    const userId = ref(null);
+
+    async function deleteItem(index) {
+    // ユーザーに削除の確認を求める
+    if (confirm("本当に削除しますか？")) {
+      try {
+        await axios.post('https://jc4kgl3dprdds5lizftwoc3xua0iucgv.lambda-url.ap-northeast-1.on.aws/', {
+          index: index + 1, 
+          user_id: userId.value
+        });
+        userData.value.splice(index, 1); // ローカルのリストから項目を削除
+      } catch (error) {
+        console.error("Error sending delete request", error);
+      }
+    } else {
+      //何もしない
+    }
+}
 
     function isImageUrl(url) {
       return /\.(jpg|jpeg|png|gif)$/i.test(url);
@@ -59,6 +89,7 @@ export default defineComponent({
         await liff.init({ liffId: "2002041664-Jz0GGDWZ" });
         if (liff.isLoggedIn()) {
           const profile = await liff.getProfile();
+          userId.value = profile.userId;
           return profile.userId;
         } else {
           liff.login();
@@ -87,7 +118,7 @@ export default defineComponent({
 
     onMounted(loadData);
 
-    return { userData,isImageUrl };
+    return { userData,isImageUrl,deleteItem };
   },
 });
 </script>
