@@ -5,8 +5,6 @@
     <router-link to="/">戻る</router-link>
   </div>
 
-
-  <div class="userData-section">
       <div v-if="userData && userData.length">
         <draggable v-model="userData" group="people" item-key="id" handle=".handle">
           <template #item="{element}">
@@ -19,7 +17,6 @@
       <div v-else>
         データをロード中...
       </div>
-    </div>
 
 </template>
 

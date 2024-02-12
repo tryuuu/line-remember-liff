@@ -21,13 +21,13 @@
       <div v-if="userData && userData.length">
         <div v-for="(element, index) in userData" :key="index" class="drag-area">
           {{ element }}
-          <font-awesome-icon :icon="['fas', 'circle-plus']" @click="IfSelected()"  />
-         
+          <font-awesome-icon :icon="['fas', 'circle-plus']" @click="IfSelected(index)"  />
+
           <!-- selectedTabで選択肢を追跡 -->
-          <select v-model="selectedTab">
+          <select v-if="selectedElementIndex === index" v-model="selectedTab">
             <option v-for="tab in tabs" :value="tab.name" :key="tab.name">{{ tab.name }}</option>
           </select>
-          <button v-if="selectedTab" @click="PutDataToTab(element)">確定</button>
+          <button v-if="selectedElementIndex === index" @click="PutDataToTab(element)">確定</button>
         </div>
       </div>
       <div v-else>
@@ -52,7 +52,7 @@ export default {
     const newTabName = ref('');
     const selectedTab = ref(null);
     const tabs = ref([]);
-    const plus = ref('false');
+    const selectedElementIndex = ref(null);
 
     async function fetchUserData(userId) {
       try {
@@ -122,9 +122,12 @@ export default {
       selectedTab.value = null;
     }
 
+    function IfSelected(index) {
+      selectedElementIndex.value = index;
+    }
 
     //templateに渡す
-    return { userData, newTabName, tabs, plus, addTab,MovetoTab, PutDataToTab, selectedTab, EditTab, DeleteTab};
+    return { userData, newTabName, tabs,addTab,MovetoTab, PutDataToTab, selectedTab, EditTab, DeleteTab, IfSelected, selectedElementIndex};
   }
 };
 </script>
