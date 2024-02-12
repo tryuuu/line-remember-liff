@@ -1,31 +1,62 @@
 <template>
 <!--データベースから取得した要素を表示-->
   <div>
-    <h2>テストページ2</h2>
-    <router-link to="/">前のページに戻る</router-link>
-    <h2>{{items}}</h2>
-    <div v-if="items && items.length">
-      <h3>渡された要素:</h3>
-      <ul>
-        <li v-for="(item, index) in items" :key="index">{{ item }}</li>
-      </ul>
-    </div>
-    <div v-else>
-      要素がありません。
-    </div>
+    <h2>{{selectedtag}}</h2>
+    <router-link to="/">戻る</router-link>
   </div>
+
+
+  <div class="userData-section">
+      <div v-if="userData && userData.length">
+        <draggable v-model="userData" group="people" item-key="id" handle=".handle">
+          <template #item="{element}">
+            <div class="drag-area">
+              <span class="handle">{{ element }}</span>
+            </div>
+          </template>
+        </draggable>
+      </div>
+      <div v-else>
+        データをロード中...
+      </div>
+    </div>
+
 </template>
 
 <script>
+import { ref, onMounted } from 'vue';
+import draggable from 'vuedraggable';
+import axios from 'axios';
+import '@/assets/styles.css';
+
 export default {
+  components: {
+    draggable,
+  },
   props: {
     id: {
       type: [String, Number],
       required: true
     },
-    items: {
-      type: Array
+  tag: {
+      type: String
     }
-  }
+  },
+
+  setup(props) {
+    const userData = ref([]);
+    const selectedtag = ref(props.tag);
+    async function fetchUserData() {
+      const userId = "Uc548b525e303bbc78aeae20775a7a39d";
+      const response = await axios.post("https://puyufqti6egmr4zt6xupks3h3a0auefo.lambda-url.ap-northeast-1.on.aws/", {user_id: userId, tag: selectedtag.value});
+      userData.value = response.data;
+      console.log(userData.value);
+    }
+    onMounted(fetchUserData);
+    return {
+      userData, selectedtag
+    };
+  },
 };
+
 </script>

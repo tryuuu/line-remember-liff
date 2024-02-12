@@ -1,0 +1,79 @@
+.handle {
+    cursor: pointer; 
+  }
+
+  .icon-spacing {
+    margin-left: 10px;
+  }
+  
+  .message-item {
+    max-width: 90%;
+    margin: 10px auto;
+  }
+  
+  .message-code {
+    white-space: pre-wrap;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    overflow-x: auto;
+  }
+  .tab-name {
+    color: #837f7f; 
+    margin-top: 20px; /* 上に10pxの間隔 */
+    margin-bottom: 20px; /* 下に10pxの間隔 */
+    text-decoration: none !important; /* リンクの下線を消します */
+    color: inherit; /* テキストの色を継承します */
+  }
+  
+ 
+  .drag-area {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    white-space: pre-wrap;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    overflow-x: auto;
+    width: 50%; 
+    margin-left: 200px;
+    margin-bottom: 30px;
+  }
+ 
+  .container {
+    display: grid;
+    grid-template-columns: 2fr 5fr;
+    gap: 20px; 
+    padding: 20px; 
+  }
+  
+  .tabs-section {
+    background-color: #f8f8f8; 
+    padding: 30px; 
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(213, 57, 57, 0.1); 
+  }
+  
+  .userData-section {
+    background-color: #fff;
+    padding: 100px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(17, 16, 16, 0.1);
+    width: 100%; 
+    max-width: 500px; 
+    margin-top: -100px;
+  }
+
+  .tabs-section, .userData-section {
+    border-right: none; /* 右側の縦線を消す */
+  }
+  
+  @media (max-width: 600px) {
+    .container {
+      grid-template-columns: 1fr;
+      gap: 15px; 
+    }
+  }

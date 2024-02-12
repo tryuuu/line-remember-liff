@@ -13,7 +13,7 @@ const routes = [
     path: '/:id',
     name: 'SubComponent',
     component: SubComponent,
-    props: true
+    props: route => ({ id: route.params.id, tag: route.query.tag })
   }
 ]
 

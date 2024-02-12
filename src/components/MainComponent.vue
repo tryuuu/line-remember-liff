@@ -1,62 +1,58 @@
 <template>
+<h2>一覧</h2>
   <div class="container">
     <!-- タブの追加部分 -->
     <div class="tabs-section">
       <div>
+        <!--v-modelでnewTabNameを追跡-->
         <input v-model="newTabName" placeholder="新しいタブ名">
-        <button @click="addTab">タブを追加</button>
+        <font-awesome-icon :icon="['fas', 'plus']" @click="addTab" />
       </div>
-
-      <div>
         <div v-for="(item, index) in tabs" :key="index">
-          {{ item.name }}
-          <h2>{{item.items}}</h2>
-          <!--ここでデータベースに保存-->
-          <router-link :to="{ name: 'SubComponent', params: { id: index, items: item.items }}">移動</router-link>
+          <div class="button-container">
+                 <router-link :to="{ name: 'SubComponent', params: { id: index }, query: { tag: item.name }}" class="tab-name">
+                    > {{ item.name }}
+                 </router-link>
+                <font-awesome-icon :icon="['fas', 'pen']" @click="EditTab(item.name)" class="icon-spacing" />
+                <font-awesome-icon :icon="['fas', 'trash']" @click="DeleteTab(item.name)" class="icon-spacing" />
+          </div>
         </div>
-      </div>
     </div>
-
-    <!-- ユーザーデータのドラッグ可能なリスト -->
-    <div class="userData-section">
       <div v-if="userData && userData.length">
-        <draggable v-model="userData" group="people" item-key="id" handle=".handle">
-          <template #item="{element}">
-            <div class="drag-area">
-              <span class="handle">{{ element }}</span>
-              <!--v-modelのselectedTabで選択肢を追跡-->
-              <select v-model="selectedTab">
-                <option v-for="tab in tabs" :value="tab.name" :key="tab.name">{{ tab.name }}</option>
-              </select>
-              <button v-if="selectedTab" @click="PutDataToTab(element)">確定</button>
-            </div>
-          </template>
-        </draggable>
+        <div v-for="(element, index) in userData" :key="index" class="drag-area">
+          {{ element }}
+          <font-awesome-icon :icon="['fas', 'circle-plus']" @click="IfSelected()"  />
+         
+          <!-- selectedTabで選択肢を追跡 -->
+          <select v-model="selectedTab">
+            <option v-for="tab in tabs" :value="tab.name" :key="tab.name">{{ tab.name }}</option>
+          </select>
+          <button v-if="selectedTab" @click="PutDataToTab(element)">確定</button>
+        </div>
       </div>
       <div v-else>
         データをロード中...
       </div>
-    </div>
   </div>
 </template>
 
 
 <script>
 import { ref, onMounted } from 'vue';
-import draggable from 'vuedraggable';
 import axios from 'axios';
+import '@/assets/styles.css';
 
+//インポートしたコンポーネントを使用
 export default {
-  components: {
-    draggable,
-  },
+
+  //setup()関数は必ず1回は呼び出される
   setup() {
+    //refで変数を宣言, v-modelで追跡も可能
     const userData = ref([]);
     const newTabName = ref('');
     const selectedTab = ref(null);
-    //const currentElement = ref(null);
     const tabs = ref([]);
-    tabs.value.push({name: "以降先のタブを選択してください",items: []});
+    const plus = ref('false');
 
     async function fetchUserData(userId) {
       try {
@@ -73,109 +69,62 @@ export default {
         await fetchUserData(userId);
       }
     }
-
+    // ページがロードされたときにデータを取得
     onMounted(loadData);
 
-    function addTab() {
+    async function addTab() {
+      // 空白のタブ名は追加しない
       if (newTabName.value.trim() === '') {
         return;
       }
-      tabs.value.push({ name: newTabName.value, items: [] });
-      newTabName.value = '';
+      const userId = "Uc548b525e303bbc78aeae20775a7a39d";
+     //非同期処理はawaitで処理が終わるまで待つ
+      await axios.post('https://yacnkgm5nf3ve36j7nhua6ii7i0qqpct.lambda-url.ap-northeast-1.on.aws/', { user_id: userId, tag: newTabName.value });
+      location.reload();
+      newTabName.value = '';//もとに戻す
+    }
+
+    function EditTab() {
+      //タブの編集
+      //このタイミングで二つのテーブルのタブ名を同時に編集
+    }
+    
+    async function DeleteTab(tag) {
+      const userId = "Uc548b525e303bbc78aeae20775a7a39d";
+      if (window.confirm('本当に削除しますか？')) {
+        await axios.post('https://a4cwjsxg5w4serckw4idsinrzm0ggmgv.lambda-url.ap-northeast-1.on.aws/', { user_id: userId, tag: tag });
+      }
+      location.reload();
     }
 
     function MovetoTab(element){
     const selected = ref('以降先のタブを選択してください');
-    const tabs = ref([
-      { name: '以降先のタブを選択してください',items: [] },
-    ]);
     return { selected, tabs,element };
     }
 
-    function PutDataToTab(element) {
-      const name = selectedTab.value;
-      const tab = tabs.value.find(t => t.name === name);
-      tab.items.push(element);
+    async function TakeTags(){
+      const userId = "Uc548b525e303bbc78aeae20775a7a39d";
+      const response = await axios.post('https://rjxsim7m5pyixozvrcfgouck2i0lklkx.lambda-url.ap-northeast-1.on.aws/', { user_id: userId });
+      console.log("aaa");
+      console.log(response.data);
+      for (let i = 0; i < response.data.length; i++) {
+        tabs.value.push({name: response.data[i],items: []});
+      }
       console.log(tabs);
-      // リセット
+    }
+    onMounted(TakeTags);
+
+    async function PutDataToTab(element){
+      const name = selectedTab.value;
+      const userId = "Uc548b525e303bbc78aeae20775a7a39d";
+      await axios.post('https://yacnkgm5nf3ve36j7nhua6ii7i0qqpct.lambda-url.ap-northeast-1.on.aws/', { user_id: userId, tag: name, item: element});
+      location.reload();
       selectedTab.value = null;
     }
 
-    return { userData, newTabName, tabs, addTab,MovetoTab, PutDataToTab, selectedTab };
+
+    //templateに渡す
+    return { userData, newTabName, tabs, plus, addTab,MovetoTab, PutDataToTab, selectedTab, EditTab, DeleteTab};
   }
 };
 </script>
-
-
-<style>
-.handle {
-  cursor: pointer; 
-}
-.message-item {
-  max-width: 90%;
-  margin: 10px auto;
-}
-
-.message-code {
-  white-space: pre-wrap;
-  background-color: #f5f5f5;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  padding: 10px;
-  overflow-x: auto;
-}
-.drag-area {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  white-space: pre-wrap;
-  background-color: #f5f5f5;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  padding: 10px;
-  overflow-x: auto;
-  width: 100%; 
-}
-
-.selecttab-button {
-  margin-left: auto;
-  padding: 5px 10px;
-  background-color: #e7e7f7;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-
-.container {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 20px; 
-  padding: 20px; 
-}
-
-.tabs-section {
-  background-color: #f8f8f8; 
-  padding: 15px; 
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
-}
-
-.userData-section {
-  background-color: #fff;
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: 100%; 
-  max-width: 600px; 
-}
-
-
-@media (max-width: 600px) {
-  .container {
-    grid-template-columns: 1fr;
-    gap: 15px; 
-  }
-}
-
-</style>
